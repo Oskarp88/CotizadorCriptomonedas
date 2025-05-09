@@ -43,14 +43,20 @@ const Formulario = ({guardarMoneda,guardarCriptomoneda}) => {
     //Utilizar useCripto
     const [criptomoneda, SelectCripto] = useCripto('Elige tu Criptomoneda','',listacripto);
     //ejecutar llamado a la Api
-    useEffect(()=>{
-        const consultarApi = async ()=>{
-            const url = 'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD';
-            const result =  await axios.get(url);
-            guardarCriptomonedas(result.data.Data);
-        }
+    useEffect(() => {
+        const consultarApi = async () => {
+          try {
+            const url =
+              "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
+            const { data } = await axios.get(url);
+            guardarCriptomonedas(data.Data);
+          } catch (error) {
+            console.error("Error al consultar API de criptos:", error);
+          }
+        };
+    
         consultarApi();
-    },[]);
+      }, []);
 
     //cuando se ejecuta submit
 
@@ -72,7 +78,7 @@ const Formulario = ({guardarMoneda,guardarCriptomoneda}) => {
 
     return ( 
         <form onSubmit={cotizarModena}>
-            {error ? <Error mensaje = 'SELECCIONA TODOS LOS CAMPOS'/>:null}
+             {error && <Error mensaje="Por favor, completa todos los campos" />}
             <SelectMonedas />
             <SelectCripto />
 

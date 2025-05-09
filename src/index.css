@@ -1,5 +1,7 @@
 body {
-  background: linear-gradient(109.5deg, rgb(13, 11, 136) 9.4%, rgb(86, 255, 248) 78.4%);
+  background: linear-gradient(109.5deg, rgb(10, 45, 94) 9.4%, rgb(63, 135, 216) 78.4%);
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 .error {
   background-color: #b7322c;

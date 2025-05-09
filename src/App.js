@@ -7,8 +7,11 @@ import Spinner from "./components/Spinner";
 import imagen from "./cryptomonedas.png";
 
 const Contenedor = styled.main`
-  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
+  flex: display;
+  justify-content: center;
+  align-items: center;
 
   @media (min-width: 992px) {
     display: grid;
@@ -18,8 +21,8 @@ const Contenedor = styled.main`
 `;
 
 const Imagen = styled.img`
-  max-width: 100%;
-  margin-top: 5rem;
+  max-width: 80%;
+  margin-top: 2rem;
 `;
 
 const Heading = styled.h1`
