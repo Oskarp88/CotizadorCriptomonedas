@@ -3,92 +3,89 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Cotizacion from "./components/Cotizacion";
 import Formulario from "./components/Formulario";
-import Spinner from "./components/Spinner.js";
-import imagen from "./cryptomonedas.png"
+import Spinner from "./components/Spinner";
+import imagen from "./cryptomonedas.png";
 
-const Contenedor = styled.div`
-    max-width: 900px;
-    margin: 0 auto;
-    @media (min-width:992px){
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
-      column-gap: 2rem;
-    }
+const Contenedor = styled.main`
+  max-width: 900px;
+  margin: 0 auto;
+
+  @media (min-width: 992px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 2rem;
+  }
 `;
 
 const Imagen = styled.img`
-   max-width: 100%;
-   margin-top: 5rem;
+  max-width: 100%;
+  margin-top: 5rem;
 `;
 
 const Heading = styled.h1`
-   font-family: 'Bebas Neue', cursive;
-   color: #fff;
-   text-align: center;
-   font-weight: 700;
-   font-size: 50px;
-   margin-bottom: 50px;
-   margin-top: 80px;
+  font-family: "Bebas Neue", cursive;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  font-size: 50px;
+  margin: 80px 0 50px;
 
-   &::after{
-    content: '';
+  &::after {
+    content: "";
     width: 100%;
     height: 6px;
     background-color: #36486b;
-    display:block;
-   }
+    display: block;
+  }
 `;
 
 function App() {
-
-  const [moneda, guardarMoneda]=useState('');
-  const [criptomoneda, guardarCriptomoneda]=useState('');
+  const [moneda, guardarMoneda] = useState("");
+  const [criptomoneda, guardarCriptomoneda] = useState("");
   const [result, setResult] = useState({});
-  const [cargando, guardarCargando]=useState(false);
+  const [cargando, guardarCargando] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
+    const cotizarCriptomoneda = async () => {
+      if (moneda === "" || criptomoneda === "") return;
 
-    const cotizarCriptomoneda = async ()=>{
-      //evitamos la ejecucion la primera vez
-     if(moneda ==='')return;
+      guardarCargando(true);
 
-     // consultar la api para obtener la cotizacion de las moneda
-     const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
-     const result = await axios.get(url);
+      try {
+        const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
+        const { data } = await axios.get(url);
 
-     //mostrar el spinner
-     guardarCargando(true);
+        setTimeout(() => {
+          guardarCargando(false);
+          setResult(data.DISPLAY[criptomoneda][moneda]);
+        }, 3000);
+      } catch (error) {
+        console.error("Error al consultar la API:", error);
+        guardarCargando(false);
+      }
+    };
 
-     //ocultar el spinner y mostrar el resultado
-     setTimeout(()=>{
-      //cambiar el estadp de cargando
-      guardarCargando(false);
-      //guardar cotizacion
-      setResult(result.data.DISPLAY[criptomoneda][moneda]);
-     }, 3000);
-     
-    }
     cotizarCriptomoneda();
-
   }, [moneda, criptomoneda]);
 
-  //mostrar el spinner o resultado
-  const componente = (cargando) ? <Spinner /> : <Cotizacion result={result} />
   return (
-    <Contenedor >
-      <div>
-        <Imagen src={imagen} alt='imagen cripto'/>
-      </div>
-      <div>
-        <Heading>
-          Cotiza Criptomonedas al Instante
-        </Heading>
-        <Formulario 
-           guardarMoneda={guardarMoneda}
-           guardarCriptomoneda={guardarCriptomoneda}
+    <Contenedor>
+      <section>
+        <Imagen src={imagen} alt="imagen cripto" />
+      </section>
+
+      <section>
+        <header>
+          <Heading>Cotiza Criptomonedas al Instante</Heading>
+        </header>
+
+        <Formulario
+          guardarMoneda={guardarMoneda}
+          guardarCriptomoneda={guardarCriptomoneda}
         />
-        {componente}
-      </div>
+
+        {cargando ? <Spinner /> : <Cotizacion result={result} />}
+      </section>
     </Contenedor>
   );
 }
